@@ -78,13 +78,13 @@
 
 ### macOS
 
-Скачайте **`Planty.dmg`** из [релизов](https://github.com/Duneholy/planty/releases) — это отдельный файл, не архив для Windows.
+Скачайте **`Planty-1.0.0-universal.dmg`** из [релизов](https://github.com/Duneholy/planty/releases) — это отдельный файл, не архив для Windows.
 
-1. Откройте `Planty.dmg`.
+1. Откройте `Planty-1.0.0-universal.dmg`.
 2. Перетащите **Planty** в папку «Программы».
 3. Откройте Planty из «Программ».
 
-Приложение откроется в своём окне. Его не нужно запускать через браузер и не нужно ставить Node.js.
+Приложение откроется в своём окне. Браузер и Node.js для этого не нужны.
 
 ---
 
