@@ -4,4 +4,5 @@ node_modules/
 !.env.example
 .claude/
 data/
+runtime/
 public/_care_*.js

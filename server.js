@@ -1388,7 +1388,35 @@ app.post('/api/chat/commit', (req, res) => {
   res.json({ reply, chatId: target.id });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🌿 Planty (Поливайка): http://localhost:${PORT}`);
+function openBrowser(url) {
+  const { spawn } = require('child_process');
+  const options = { detached: true, stdio: 'ignore', windowsHide: true };
+  let child;
+  if (process.platform === 'win32') {
+    child = spawn('rundll32', ['url.dll,FileProtocolHandler', url], options);
+  } else if (process.platform === 'darwin') {
+    child = spawn('open', [url], options);
+  } else {
+    child = spawn('xdg-open', [url], options);
+  }
+  child.on('error', () => {});
+  child.unref();
+}
+
+const server = app.listen(PORT, '0.0.0.0', () => {
+  const url = `http://localhost:${PORT}`;
+  console.log(`🌿 Planty (Поливайка): ${url}`);
   console.log(`Часовой пояс сервера: ${accounts.serverTimeZone()}`);
+  if (process.env.OPEN_BROWSER === '1') openBrowser(url);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    const url = `http://localhost:${PORT}`;
+    console.log(`Planty уже запущена: ${url}`);
+    if (process.env.OPEN_BROWSER === '1') openBrowser(url);
+    process.exit(0);
+  }
+  console.error(err);
+  process.exit(1);
 });
