@@ -21,6 +21,7 @@ if (fs.existsSync(envFile)) {
 }
 
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
 const als = new AsyncLocalStorage();
 let sessions = accounts.loadSessions();
 
@@ -1403,7 +1404,7 @@ function openBrowser(url) {
   child.unref();
 }
 
-const server = app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, HOST, () => {
   const url = `http://localhost:${PORT}`;
   console.log(`🌿 Planty (Поливайка): ${url}`);
   console.log(`Часовой пояс сервера: ${accounts.serverTimeZone()}`);

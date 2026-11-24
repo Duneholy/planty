@@ -5,4 +5,5 @@ node_modules/
 .claude/
 data/
 runtime/
+dist/
 public/_care_*.js

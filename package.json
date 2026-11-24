@@ -12,5 +12,41 @@
   },
   "dependencies": {
     "express": "^4.21.2"
+  },
+  "build": {
+    "appId": "com.duneholy.planty",
+    "productName": "Planty",
+    "asar": false,
+    "files": [
+      "desktop/main.js",
+      "server.js",
+      "catalogs.js",
+      "lib/**/*",
+      "public/**/*",
+      "!public/_care*",
+      "package.json",
+      "node_modules/**/*"
+    ],
+    "extraMetadata": {
+      "main": "desktop/main.js"
+    },
+    "mac": {
+      "category": "public.app-category.lifestyle",
+      "icon": "public/icon-512.png",
+      "identity": null,
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["universal"]
+        }
+      ]
+    },
+    "dmg": {
+      "title": "Установите Planty",
+      "contents": [
+        { "x": 160, "y": 185, "type": "file" },
+        { "x": 430, "y": 185, "type": "link", "path": "/Applications" }
+      ]
+    }
   }
 }
