@@ -1,6 +1,6 @@
 {
   "name": "planty",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Planty — home plant and pet care. In Russian the app is called Поливайка.",
   "author": "Yury Mikhno",
   "main": "server.js",
@@ -34,10 +34,18 @@
     "mac": {
       "category": "public.app-category.lifestyle",
       "icon": "public/icon-512.png",
-      "identity": null,
+      "hardenedRuntime": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "gatekeeperAssess": false,
+      "identity": "-",
       "target": [
         {
           "target": "dmg",
+          "arch": ["universal"]
+        },
+        {
+          "target": "zip",
           "arch": ["universal"]
         }
       ]
@@ -45,8 +53,9 @@
     "dmg": {
       "title": "Установите Planty",
       "contents": [
-        { "x": 160, "y": 185, "type": "file" },
-        { "x": 430, "y": 185, "type": "link", "path": "/Applications" }
+        { "x": 160, "y": 170, "type": "file" },
+        { "x": 430, "y": 170, "type": "link", "path": "/Applications" },
+        { "x": 300, "y": 300, "type": "file", "path": "mac/Install Planty.command" }
       ]
     }
   }

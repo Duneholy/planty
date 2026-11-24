@@ -1,71 +1,430 @@
-/* Названия, свет, виды и сезонные советы. Русский текст карточек ухода остаётся в базе. */
-const I18N_NAMES = {
-  en: { zamioculcas:'ZZ plant', dracaena:'Dragon tree', ficus:'Weeping fig', calathea:'Calathea', anthurium:'Anthurium', caladium:'Caladium', narcissus:'Daffodil', 'chlorophytum-lemon':'Spider plant', nephrolepis:'Boston fern', adenium:'Desert rose', monstera:'Monstera', pothos:'Pothos', aloe:'Aloe', sansevieria:'Snake plant', philodendron:'Philodendron', begonia:'Begonia', orchid:'Orchid', 'cactus-barrel':'Golden barrel', 'cactus-opuntia':'Prickly pear', lavender:'Lavender', basil:'Basil', mint:'Mint', rosemary:'Rosemary', tulip:'Tulip', violet:'African violet', peperomia:'Peperomia', hoya:'Hoya', bromeliad:'Guzmania', spathiphyllum:'Peace lily', dieffenbachia:'Dieffenbachia', aglaonema:'Aglaonema', tradescantia:'Tradescantia', maranta:'Prayer plant', strelitzia:'Bird of paradise', yucca:'Yucca', schefflera:'Schefflera', croton:'Croton', 'fern-boston':'Sword fern', ivy:'Ivy', echeveria:'Echeveria', jade:'Jade plant', kalanchoe:'Kalanchoe', pilea:'Chinese money plant', 'rubber-plant':'Rubber plant', 'palm-areca':'Areca palm', citrus:'Citrus', geranium:'Geranium', 'spathiphyllum-mini':'Mini peace lily', oxalis:'Purple shamrock', 'asparagus-fern':'Asparagus fern', other:'Other' },
-  es: { zamioculcas:'Zamioculca', dracaena:'Drácena', ficus:'Ficus', calathea:'Calathea', anthurium:'Anturio', caladium:'Caladio', narcissus:'Narciso', 'chlorophytum-lemon':'Cinta', nephrolepis:'Helecho de Boston', adenium:'Rosa del desierto', monstera:'Costilla de Adán', pothos:'Potos', aloe:'Aloe', sansevieria:'Lengua de suegra', philodendron:'Filodendro', begonia:'Begonia', orchid:'Orquídea', 'cactus-barrel':'Asiento de suegra', 'cactus-opuntia':'Nopal', lavender:'Lavanda', basil:'Albahaca', mint:'Menta', rosemary:'Romero', tulip:'Tulipán', violet:'Violeta africana', peperomia:'Peperomia', hoya:'Flor de cera', bromeliad:'Guzmania', spathiphyllum:'Cuna de Moisés', dieffenbachia:'Diefembaquia', aglaonema:'Aglaonema', tradescantia:'Tradescantia', maranta:'Maranta', strelitzia:'Ave del paraíso', yucca:'Yuca', schefflera:'Cheflera', croton:'Crotón', 'fern-boston':'Helecho espada', ivy:'Hiedra', echeveria:'Echeveria', jade:'Árbol de jade', kalanchoe:'Kalanchoe', pilea:'Pilea', 'rubber-plant':'Árbol del caucho', 'palm-areca':'Palma areca', citrus:'Cítrico', geranium:'Geranio', 'spathiphyllum-mini':'Cuna de Moisés mini', oxalis:'Trébol púrpura', 'asparagus-fern':'Esparraguera', other:'Otro' },
-  de: { zamioculcas:'Glücksfeder', dracaena:'Drachenbaum', ficus:'Birkenfeige', calathea:'Korbmarante', anthurium:'Flamingoblume', caladium:'Buntwurz', narcissus:'Narzisse', 'chlorophytum-lemon':'Grünlilie', nephrolepis:'Schwertfarn', adenium:'Wüstenrose', monstera:'Fensterblatt', pothos:'Efeutute', aloe:'Aloe', sansevieria:'Bogenhanf', philodendron:'Philodendron', begonia:'Begonie', orchid:'Orchidee', 'cactus-barrel':'Goldkugelkaktus', 'cactus-opuntia':'Feigenkaktus', lavender:'Lavendel', basil:'Basilikum', mint:'Minze', rosemary:'Rosmarin', tulip:'Tulpe', violet:'Usambaraveilchen', peperomia:'Peperomie', hoya:'Wachsblume', bromeliad:'Guzmanie', spathiphyllum:'Einblatt', dieffenbachia:'Dieffenbachie', aglaonema:'Kolbenfaden', tradescantia:'Dreimasterblume', maranta:'Gebetspflanze', strelitzia:'Paradiesvogelblume', yucca:'Palmlilie', schefflera:'Strahlenaralie', croton:'Wunderstrauch', 'fern-boston':'Bostonfarn', ivy:'Efeu', echeveria:'Echeverie', jade:'Geldbaum', kalanchoe:'Flammendes Käthchen', pilea:'UFO-Pflanze', 'rubber-plant':'Gummibaum', 'palm-areca':'Goldfruchtpalme', citrus:'Zitruspflanze', geranium:'Geranie', 'spathiphyllum-mini':'Mini-Einblatt', oxalis:'Glücksklee', 'asparagus-fern':'Zierspargel', other:'Andere' },
-  vi: { zamioculcas:'Kim tiền', dracaena:'Phát tài', ficus:'Si', calathea:'Đuôi công', anthurium:'Hồng môn', caladium:'Môn kiểng', narcissus:'Thủy tiên', 'chlorophytum-lemon':'Lan chi', nephrolepis:'Dương xỉ Boston', adenium:'Sứ sa mạc', monstera:'Trầu bà lá xẻ', pothos:'Trầu bà vàng', aloe:'Nha đam', sansevieria:'Lưỡi hổ', philodendron:'Trầu bà nam', begonia:'Thu hải đường', orchid:'Lan hồ điệp', 'cactus-barrel':'Xương rồng cầu vàng', 'cactus-opuntia':'Xương rồng tai thỏ', lavender:'Oải hương', basil:'Húng quế', mint:'Bạc hà', rosemary:'Hương thảo', tulip:'Uất kim hương', violet:'Tím châu Phi', peperomia:'Peperomia', hoya:'Hoa sáp', bromeliad:'Guzmania', spathiphyllum:'Lan ý', dieffenbachia:'Vạn niên thanh', aglaonema:'Phú quý', tradescantia:'Thài lài', maranta:'Đuôi công cầu nguyện', strelitzia:'Thiên điểu', yucca:'Ngọc giá', schefflera:'Ngũ gia bì', croton:'Croton', 'fern-boston':'Dương xỉ kiếm', ivy:'Thường xuân', echeveria:'Sen đá', jade:'Ngọc bích', kalanchoe:'Sống đời', pilea:'Cây tiền Trung Quốc', 'rubber-plant':'Đa búp đỏ', 'palm-areca':'Cau vàng', citrus:'Cây có múi', geranium:'Phong lữ', 'spathiphyllum-mini':'Lan ý mini', oxalis:'Chua me đất tím', 'asparagus-fern':'Thiên môn đông', other:'Khác' },
-  zh: { zamioculcas:'金钱树', dracaena:'龙血树', ficus:'垂叶榕', calathea:'竹芋', anthurium:'红掌', caladium:'彩叶芋', narcissus:'水仙', 'chlorophytum-lemon':'吊兰', nephrolepis:'波士顿蕨', adenium:'沙漠玫瑰', monstera:'龟背竹', pothos:'绿萝', aloe:'芦荟', sansevieria:'虎尾兰', philodendron:'喜林芋', begonia:'秋海棠', orchid:'蝴蝶兰', 'cactus-barrel':'金琥', 'cactus-opuntia':'仙人掌', lavender:'薰衣草', basil:'罗勒', mint:'薄荷', rosemary:'迷迭香', tulip:'郁金香', violet:'非洲堇', peperomia:'椒草', hoya:'球兰', bromeliad:'果子蔓', spathiphyllum:'白掌', dieffenbachia:'花叶万年青', aglaonema:'粗肋草', tradescantia:'吊竹梅', maranta:'竹芋', strelitzia:'鹤望兰', yucca:'丝兰', schefflera:'鹅掌柴', croton:'变叶木', 'fern-boston':'剑蕨', ivy:'常春藤', echeveria:'拟石莲', jade:'玉树', kalanchoe:'长寿花', pilea:'镜面草', 'rubber-plant':'橡皮树', 'palm-areca':'散尾葵', citrus:'柑橘', geranium:'天竺葵', 'spathiphyllum-mini':'迷你白掌', oxalis:'紫叶酢浆草', 'asparagus-fern':'文竹', other:'其他' },
-  fr: { zamioculcas:'Plante ZZ', dracaena:'Dragonnier', ficus:'Figuier pleureur', calathea:'Calathéa', anthurium:'Anthurium', caladium:'Caladium', narcissus:'Narcisse', 'chlorophytum-lemon':'Plante araignée', nephrolepis:'Fougère de Boston', adenium:'Rose du désert', monstera:'Monstera', pothos:'Pothos', aloe:'Aloès', sansevieria:'Langue de belle-mère', philodendron:'Philodendron', begonia:'Bégonia', orchid:'Orchidée', 'cactus-barrel':'Coussin de belle-mère', 'cactus-opuntia':'Figuier de Barbarie', lavender:'Lavande', basil:'Basilic', mint:'Menthe', rosemary:'Romarin', tulip:'Tulipe', violet:'Violette africaine', peperomia:'Pépéromia', hoya:'Fleur de porcelaine', bromeliad:'Guzmania', spathiphyllum:'Fleur de lune', dieffenbachia:'Dieffenbachia', aglaonema:'Aglaonéma', tradescantia:'Misère', maranta:'Maranta', strelitzia:'Oiseau de paradis', yucca:'Yucca', schefflera:'Schefflera', croton:'Croton', 'fern-boston':'Fougère épée', ivy:'Lierre', echeveria:'Echeveria', jade:'Arbre de jade', kalanchoe:'Kalanchoé', pilea:'Plante à monnaie', 'rubber-plant':'Caoutchouc', 'palm-areca':'Palmier areca', citrus:'Agrume', geranium:'Géranium', 'spathiphyllum-mini':'Mini fleur de lune', oxalis:'Trèfle pourpre', 'asparagus-fern':'Asparagus', other:'Autre' },
-  it: { zamioculcas:'Zamia', dracaena:'Tronchetto', ficus:'Ficus', calathea:'Calathea', anthurium:'Anthurium', caladium:'Caladio', narcissus:'Narciso', 'chlorophytum-lemon':'Falangio', nephrolepis:'Felce di Boston', adenium:'Rosa del deserto', monstera:'Monstera', pothos:'Pothos', aloe:'Aloe', sansevieria:'Sansevieria', philodendron:'Filodendro', begonia:'Begonia', orchid:'Orchidea', 'cactus-barrel':'Cuscino della suocera', 'cactus-opuntia':'Fico d’India', lavender:'Lavanda', basil:'Basilico', mint:'Menta', rosemary:'Rosmarino', tulip:'Tulipano', violet:'Violetta africana', peperomia:'Peperomia', hoya:'Fiore di cera', bromeliad:'Guzmania', spathiphyllum:'Spatifillo', dieffenbachia:'Dieffenbachia', aglaonema:'Aglaonema', tradescantia:'Tradescanzia', maranta:'Maranta', strelitzia:'Uccello del paradiso', yucca:'Yucca', schefflera:'Schefflera', croton:'Croton', 'fern-boston':'Felce spada', ivy:'Edera', echeveria:'Echeveria', jade:'Albero di giada', kalanchoe:'Calancola', pilea:'Pianta delle monete', 'rubber-plant':'Ficus elastica', 'palm-areca':'Palma areca', citrus:'Agrume', geranium:'Geranio', 'spathiphyllum-mini':'Spatifillo mini', oxalis:'Acetosella viola', 'asparagus-fern':'Asparagina', other:'Altro' },
-  hi: { zamioculcas:'ZZ पौधा', dracaena:'ड्रैगन ट्री', ficus:'वीपिंग फिग', calathea:'कैलाथिया', anthurium:'एंथूरियम', caladium:'कैलेडियम', narcissus:'नर्गिस', 'chlorophytum-lemon':'स्पाइडर प्लांट', nephrolepis:'बोस्टन फर्न', adenium:'डेजर्ट रोज', monstera:'मॉन्स्टेरा', pothos:'पोथोस', aloe:'एलो', sansevieria:'स्नेक प्लांट', philodendron:'फिलोडेंड्रॉन', begonia:'बेगोनिया', orchid:'ऑर्किड', 'cactus-barrel':'गोल्डन बैरल', 'cactus-opuntia':'प्रिकली पीयर', lavender:'लैवेंडर', basil:'तुलसी/बेसिल', mint:'पुदीना', rosemary:'रोज़मेरी', tulip:'ट्यूलिप', violet:'अफ्रीकन वायलेट', peperomia:'पेपेरोमिया', hoya:'होया', bromeliad:'गुज़मानिया', spathiphyllum:'पीस लिली', dieffenbachia:'डाइफेनबैकिया', aglaonema:'एग्लोनिमा', tradescantia:'ट्रेडेस्कैन्शिया', maranta:'प्रेयर प्लांट', strelitzia:'बर्ड ऑफ पैराडाइस', yucca:'युक्का', schefflera:'शेफ्लेरा', croton:'क्रोटन', 'fern-boston':'स्वॉर्ड फर्न', ivy:'आइवी', echeveria:'एचेवेरिया', jade:'जेड प्लांट', kalanchoe:'कलानचो', pilea:'चाइनीज मनी प्लांट', 'rubber-plant':'रबर प्लांट', 'palm-areca':'अरेका पाम', citrus:'नींबू वंश', geranium:'जेरेनियम', 'spathiphyllum-mini':'मिनी पीस लिली', oxalis:'पर्पल शैमरॉक', 'asparagus-fern':'एस्पैरागस फर्न', other:'अन्य' },
-  ja: { zamioculcas:'ザミオクルカス', dracaena:'ドラセナ', ficus:'ベンジャミン', calathea:'カラテア', anthurium:'アンスリウム', caladium:'カラジウム', narcissus:'スイセン', 'chlorophytum-lemon':'オリヅルラン', nephrolepis:'ボストンファーン', adenium:'アデニウム', monstera:'モンステラ', pothos:'ポトス', aloe:'アロエ', sansevieria:'サンスベリア', philodendron:'フィロデンドロン', begonia:'ベゴニア', orchid:'コチョウラン', 'cactus-barrel':'金鯱', 'cactus-opuntia':'ウチワサボテン', lavender:'ラベンダー', basil:'バジル', mint:'ミント', rosemary:'ローズマリー', tulip:'チューリップ', violet:'セントポーリア', peperomia:'ペペロミア', hoya:'ホヤ', bromeliad:'グズマニア', spathiphyllum:'スパティフィラム', dieffenbachia:'ディフェンバキア', aglaonema:'アグラオネマ', tradescantia:'トラデスカンティア', maranta:'マランタ', strelitzia:'ストレリチア', yucca:'ユッカ', schefflera:'シェフレラ', croton:'クロトン', 'fern-boston':'タマシダ', ivy:'アイビー', echeveria:'エケベリア', jade:'カネノナルキ', kalanchoe:'カランコエ', pilea:'ピレア', 'rubber-plant':'インドゴムノキ', 'palm-areca':'アレカヤシ', citrus:'柑橘', geranium:'ゼラニウム', 'spathiphyllum-mini':'ミニスパティフィラム', oxalis:'オキザリス', 'asparagus-fern':'アスパラガス', other:'その他' }
-};
-
-const I18N_LIGHTS = {
-  en: { bright:['Plenty of bright light','The brightest spot in the home, without long midday sun. In shade the leaves shrink and fade.'], diffused:['Bright indirect light','Bright indirect light by an east or west window. Midday rays scorch the leaves.'], partial:['Partial shade','Soft light or partial shade. Direct sun bleaches the colour, deep shade makes it pale.'], shade:['Shade','Happy deeper in the room. Direct sun is unnecessary and often harmful.'], sun:['Direct sun','Needs several hours of direct sun. At the hottest midday, move it a little back from the glass.'] },
-  es: { bright:['Mucha luz brillante','El sitio más luminoso de la casa, sin sol largo de mediodía. A la sombra las hojas se achican y palidecen.'], diffused:['Luz brillante indirecta','Luz brillante indirecta en una ventana este u oeste. El sol de mediodía quema.'], partial:['Semisombra','Luz suave o semisombra. El sol directo destiñe el color y la sombra profunda lo apaga.'], shade:['Sombra','Crece tranquila lejos de la ventana. El sol directo no hace falta y suele hacer daño.'], sun:['Sol directo','Necesita varias horas de sol directo. En el mediodía más fuerte, apártala un poco del cristal.'] },
-  de: { bright:['Viel helles Licht','Der hellste Platz in der Wohnung, ohne lange Mittagssonne. Im Schatten werden die Blätter kleiner und blass.'], diffused:['Helles indirektes Licht','Helles indirektes Licht am Ost- oder Westfenster. Mittagsstrahlen verbrennen die Blätter.'], partial:['Halbschatten','Weiches Licht oder Halbschatten. Direkte Sonne bleicht die Farbe, tiefe Schatten machen sie fahl.'], shade:['Schatten','Wächst ruhig tiefer im Raum. Direkte Sonne ist unnötig und oft schädlich.'], sun:['Direkte Sonne','Braucht mehrere Stunden direkte Sonne. In der heißesten Mittagszeit etwas vom Glas wegstellen.'] },
-  vi: { bright:['Nhiều sáng','Chỗ sáng nhất nhà, không nắng trưa kéo dài. Trong bóng râm lá nhỏ và nhạt.'], diffused:['Sáng tán xạ','Sáng tán xạ ở cửa đông hoặc tây. Nắng giữa trưa làm cháy lá.'], partial:['Bán râm','Sáng dịu hoặc bán râm. Nắng thẳng làm phai màu, bóng tối sâu làm lá nhợt.'], shade:['Bóng râm','Sống ổn ở trong phòng. Nắng thẳng không cần và thường có hại.'], sun:['Nắng trực tiếp','Cần vài giờ nắng trực tiếp. Giữa trưa nóng nhất hãy kéo xa kính một chút.'] },
-  zh: { bright:['充足明亮的光','家里最亮的地方，但不要长时间的正午阳光。太暗时叶子会变小、变淡。'], diffused:['明亮散射光','东窗或西窗的明亮散射光。正午直射会灼伤叶片。'], partial:['半阴','柔光或半阴。直射会褪色，太暗又会发白。'], shade:['耐阴','放在房间深处也行。直射阳光没必要，还常常有害。'], sun:['直射阳光','需要几小时直射阳光。最热的正午把盆从玻璃旁挪开一点。'] },
-  fr: { bright:['Beaucoup de lumière vive','L’endroit le plus lumineux, sans long soleil de midi. À l’ombre les feuilles rapetissent et pâlissent.'], diffused:['Lumière vive indirecte','Lumière vive indirecte à une fenêtre est ou ouest. Le soleil de midi brûle.'], partial:['Mi-ombre','Lumière douce ou mi-ombre. Le soleil direct décolore, l’ombre profonde rend la plante pâle.'], shade:['Ombre','Pousse tranquillement au fond de la pièce. Le soleil direct est inutile et souvent nuisible.'], sun:['Soleil direct','Il faut plusieurs heures de soleil direct. Au plus fort de midi, écartez un peu du verre.'] },
-  it: { bright:['Molta luce intensa','Il punto più luminoso di casa, senza sole lungo di mezzogiorno. All’ombra le foglie rimpiccioliscono e sbiadiscono.'], diffused:['Luce intensa indiretta','Luce intensa indiretta a una finestra a est o a ovest. Il sole di mezzogiorno brucia.'], partial:['Mezz’ombra','Luce morbida o mezz’ombra. Il sole diretto scolorisce, l’ombra fonda rende la pianta pallida.'], shade:['Ombra','Sta bene più in fondo alla stanza. Il sole diretto non serve e spesso fa male.'], sun:['Sole diretto','Servono diverse ore di sole diretto. Nel mezzogiorno più caldo, allontanala un poco dal vetro.'] },
-  hi: { bright:['बहुत तेज़ रोशनी','घर की सबसे चमकदार जगह, बिना लंबी दोपहर की धूप। छाया में पत्तियाँ छोटी और फीकी हो जाती हैं।'], diffused:['तेज़ छनकर आती रोशनी','पूर्व या पश्चिम खिड़की की तेज़ अप्रत्यक्ष रोशनी। दोपहर की किरणें जला देती हैं।'], partial:['आधी छाया','नरम रोशनी या आधी छाया। सीधी धूप रंग उड़ाती है, गहरी छाया फीका कर देती है।'], shade:['छाया','कमरे के अंदर भी ठीक रहता है। सीधी धूप ज़रूरी नहीं और अक्सर नुकसानदेह है।'], sun:['सीधी धूप','कई घंटे सीधी धूप चाहिए। सबसे गर्म दोपहर में काँच से थोड़ा हटा दें।'] },
-  ja: { bright:['明るい光をたっぷり','家でいちばん明るい場所。ただし昼の直射は長く当てない。暗いと葉が小さく色あせる。'], diffused:['明るい間接光','東か西の窓の明るい間接光。真昼の直射は葉を焼く。'], partial:['半日陰','やわらかい光か半日陰。直射は色を抜き、暗すぎると色が薄くなる。'], shade:['日陰','部屋の奥でも育つ。直射は不要で、害になることが多い。'], sun:['直射日光','数時間の直射が必要。いちばん暑い昼はガラスから少し離す。'] }
-};
-
-const I18N_PETS = {
-  en: { hamster:'Syrian hamster', 'guinea-pig':'Guinea pig', rabbit:'Pet rabbit', cat:'House cat', dog:'Dog', parrot:'Budgerigar', budgie:'Lovebird', canary:'Canary', goldfish:'Goldfish', betta:'Betta', turtle:'Red-eared slider', chinchilla:'Chinchilla', ferret:'Ferret', gerbil:'Gerbil', rat:'Pet rat', gecko:'Leopard gecko', 'corn-snake':'Corn snake', hedgehog:'African hedgehog', mouse:'House mouse', degu:'Degu' },
-  es: { hamster:'Hámster sirio', 'guinea-pig':'Cobaya', rabbit:'Conejo doméstico', cat:'Gato doméstico', dog:'Perro', parrot:'Periquito', budgie:'Agapornis', canary:'Canario', goldfish:'Pez dorado', betta:'Pez betta', turtle:'Tortuga de orejas rojas', chinchilla:'Chinchilla', ferret:'Hurón', gerbil:'Gerbo', rat:'Rata doméstica', gecko:'Geco leopardo', 'corn-snake':'Serpiente del maíz', hedgehog:'Erizo africano', mouse:'Ratón doméstico', degu:'Degú' },
-  de: { hamster:'Syrischer Goldhamster', 'guinea-pig':'Meerschweinchen', rabbit:'Zwergkaninchen', cat:'Hauskatze', dog:'Hund', parrot:'Wellensittich', budgie:'Unzertrennlicher', canary:'Kanarienvogel', goldfish:'Goldfisch', betta:'Kampffisch', turtle:'Rotwangen-Schmuckschildkröte', chinchilla:'Chinchilla', ferret:'Frettchen', gerbil:'Rennmaus', rat:'Farbratte', gecko:'Leopardgecko', 'corn-snake':'Kornnatter', hedgehog:'Afrikanischer Weißbauchigel', mouse:'Farbmaus', degu:'Degu' },
-  vi: { hamster:'Chuột hamster Syria', 'guinea-pig':'Chuột lang', rabbit:'Thỏ cảnh', cat:'Mèo nhà', dog:'Chó', parrot:'Vẹt yến phụng', budgie:'Vẹt lovebird', canary:'Chim hoàng yến', goldfish:'Cá vàng', betta:'Cá lia thia', turtle:'Rùa tai đỏ', chinchilla:'Sóc chuột', ferret:'Chồn sương', gerbil:'Chuột nhảy', rat:'Chuột cảnh', gecko:'Tắc kè da báo', 'corn-snake':'Rắn ngô', hedgehog:'Nhím châu Phi', mouse:'Chuột nhắt', degu:'Degu' },
-  zh: { hamster:'叙利亚仓鼠', 'guinea-pig':'豚鼠', rabbit:'宠物兔', cat:'家猫', dog:'狗', parrot:'虎皮鹦鹉', budgie:'爱情鸟', canary:'金丝雀', goldfish:'金鱼', betta:'斗鱼', turtle:'巴西龟', chinchilla:'龙猫', ferret:'雪貂', gerbil:'沙鼠', rat:'宠物鼠', gecko:'豹纹守宫', 'corn-snake':'玉米锦蛇', hedgehog:'非洲迷你刺猬', mouse:'家鼠', degu:'八齿鼠' },
-  fr: { hamster:'Hamster syrien', 'guinea-pig':'Cochon d’Inde', rabbit:'Lapin nain', cat:'Chat domestique', dog:'Chien', parrot:'Perruche ondulée', budgie:'Inséparable', canary:'Canari', goldfish:'Poisson rouge', betta:'Combattant', turtle:'Tortue de Floride', chinchilla:'Chinchilla', ferret:'Furet', gerbil:'Gerbille', rat:'Rat domestique', gecko:'Gecko léopard', 'corn-snake':'Serpent des blés', hedgehog:'Hérisson africain', mouse:'Souris domestique', degu:'Dègue' },
-  it: { hamster:'Criceto siriano', 'guinea-pig':'Cavia', rabbit:'Coniglio nano', cat:'Gatto domestico', dog:'Cane', parrot:'Cocorita', budgie:'Inseparabile', canary:'Canarino', goldfish:'Pesce rosso', betta:'Pesce combattente', turtle:'Tartaruga dalle orecchie rosse', chinchilla:'Cincillà', ferret:'Furetto', gerbil:'Gerbillo', rat:'Ratto domestico', gecko:'Geco leopardo', 'corn-snake':'Serpente del grano', hedgehog:'Riccio africano', mouse:'Topo domestico', degu:'Degu' },
-  hi: { hamster:'सीरियाई हैम्स्टर', 'guinea-pig':'गिनी पिग', rabbit:'पालतू खरगोश', cat:'घरेलू बिल्ली', dog:'कुत्ता', parrot:'बजरीगर', budgie:'लवबर्ड', canary:'कैनरी', goldfish:'गोल्डफिश', betta:'बेटा मछली', turtle:'रेड-ईयर्ड स्लाइडर', chinchilla:'चिंचिला', ferret:'फेरेट', gerbil:'जर्बिल', rat:'पालतू चूहा', gecko:'लेपर्ड गेको', 'corn-snake':'कॉर्न स्नेक', hedgehog:'अफ्रीकी हेजहॉग', mouse:'घरेलू चूहा', degu:'डेगू' },
-  ja: { hamster:'ゴールデンハムスター', 'guinea-pig':'モルモット', rabbit:'イエウサギ', cat:'イエネコ', dog:'イヌ', parrot:'セキセイインコ', budgie:'ボタンインコ', canary:'カナリア', goldfish:'キンギョ', betta:'ベタ', turtle:'ミドリガメ', chinchilla:'チンチラ', ferret:'フェレット', gerbil:'スナネズミ', rat:'ペットラット', gecko:'ヒョウモントカゲモドキ', 'corn-snake':'コーンスネーク', hedgehog:'ヨツユビハリネズミ', mouse:'ハツカネズミ', degu:'デグー' }
-};
-
-const SEASON_IDS = { 'весна': 'spring', 'лето': 'summer', 'осень': 'autumn', 'зима': 'winter' };
-
-function tipPack(spring, summer, autumn, winter) {
-  return { spring: [spring], summer: [summer], autumn: [autumn], winter: [winter] };
-}
-
-const I18N_TIPS = {
-  en: {
-    hamsterSeason: { spring:['🌤 Days are longer and the hamster is busier — check the wheel and add toys.','🚪 While you air the room, move the cage: spring draughts cause colds.','🥬 Introduce greens slowly, in small pieces.'], summer:['🌡 Heat is dangerous above 26 °C — keep the cage out of the sun and the room cool.','🧊 A ceramic tile or cooled stone lets the hamster lie down and cool off.','💧 In heat, water spoils faster — change it more often.','🥕 Remove juicy food after 3–4 hours; it sours quickly in summer.'], autumn:['🍂 Hamsters hoard more in autumn — check stores and throw out spoiled food.','🏠 Offer more paper bedding: the hamster is building a warm nest.','🌡 Once heating starts, keep the cage off the radiator and watch the dry air.'], winter:['🌡 Do not let the room fall below 18 °C; near 15 °C a hamster can slip into a dangerous torpor.','🚪 Keep the cage off cold windows and draughts, but not against the radiator.','🏠 Give plenty of unscented tissue and paper bedding for the nest.','🌾 Appetite rises a little in winter — a slightly larger portion is fine, but watch the hoard.'] },
-    hamsterAge: { baby:['🍼 A baby needs protein every 2–3 days: egg, low-fat cottage cheese, dried shrimp.','🤲 Tame slowly: voice and hand scent first, then a treat from the palm.','😴 Do not wake it by day or pick it up against its will.'], young:['🏃 Peak energy: a solid wheel at least 28 cm across is essential.','🕳 Bedding 15–20 cm deep — young hamsters love to burrow.','🥚 Protein 2–3 times a week supports muscle.','🦷 Teeth grow for life — keep a mineral stone or fruit-wood twigs in the cage.'], adult:['⚖️ Watch weight: an adult Syrian is about 120–180 g; sudden change matters.','🥜 Nuts are a treat, not the diet: too fatty for more than a couple of times a week.','🧭 Keep a routine. Hamsters like cleaning, feeding and play at similar times.'], senior:['👴 After about 18 months a hamster sleeps more and runs less. That is normal.','🥣 If chewing gets harder, soften dry food with a little water.','🪜 Remove high levels and ladders — falls get more dangerous.','⚖️ Check weight and coat weekly. Fast loss or bald patches need a vet.'] },
-    species: {
-      hamster: tipPack('🌤 More activity — check the wheel and toys.','🌡 In heat, keep it cool and refresh the water more often.','🍂 They hoard — do not let stores spoil.','🌡 Do not let the room with the cage drop below 18 °C.'),
-      'guinea-pig': tipPack('✂️ Long-haired breeds may need a trim after winter.','🥒 Remove fresh vegetables after 2–3 hours.','🏠 Warm the hide and keep it out of draughts.','🌾 Hay must always be there — it is the base of the diet all year.'),
-      rabbit: tipPack('🪮 Moulting — brush more often.','🌡 Rabbits handle heat poorly. Keep them cool.','🥕 Add roots to the diet gradually.','🌾 Unlimited hay and water matter most in winter.'),
-      cat: tipPack('🏃 Play more after the lazy winter.','💧 Keep the tray and water bowls clean and cool.','🧹 Check the carrier and vaccines before the season.','🛁 Brushing helps with the seasonal moult.'),
-      dog: tipPack('🩺 Tick protection after winter.','🚶 Walk early and late; avoid hot asphalt.','🦴 Watch weight as activity drops.','🧣 Short-coated dogs may need a coat outside.'),
-      parrot: tipPack('🪶 Moult — add protein and calcium.','🛁 A bath or a mist helps in the heat.','🧸 New toys keep them busy as days shorten.','🌡 No draughts, but daily access to light.'),
-      budgie: tipPack('🪺 If you keep a pair, watch nesting.','💧 Fresh water twice a day.','🧹 Disinfect perches and dishes.','🌾 Varied food, without too many fatty seeds.'),
-      canary: tipPack('🥚 In the breeding season, offer protein and greens.','🛁 A shallow bath dish.','🌡 No sudden temperature swings.','☀️ Extra light keeps song and activity going.'),
-      goldfish: tipPack('🧹 After winter, a thorough clean without a sudden full water change.','💧 Aeration and partial water changes in the heat.','🐟 Feed less if the tank cools.','🌡 In cool water they are less active — feed less often.'),
-      betta: tipPack('🪴 Live plants improve the water.','🧊 Do not let the water rise above 30 °C.','💧 Change 20–30 % of the water once a week.','🌡 A steady 24–28 °C — a heater is essential.'),
-      turtle: tipPack('🩺 After a slow winter, check them if appetite is weak.','☀️ Outdoor sun only while you watch.','🌡 Young turtles need warmth, not a winter sleep.','💡 A UV lamp for 10–12 hours a day.'),
-      chinchilla: tipPack('🌾 Hay and pellets, treats in moderation.','❄️ Cool only: above 25 °C is dangerous.','🧹 Dry cleaning. Do not wash the cage wet.','🛁 A dust bath, regularly.'),
-      ferret: tipPack('🩺 Vaccines and parasite protection on the vet’s schedule.','💧 Water and a cool place are essential.','🧸 New tunnels when outdoor time drops.','🏃 Lots of movement — at least 4 hours out of the cage.'),
-      gerbil: tipPack('🪵 Fresh twigs to wear the teeth down.','🧊 Slightly cool sand — they dig burrows.','🧹 Do not overfill the bedding; dryness matters.','🌾 Pellets and hay, few extra nuts.'),
-      rat: tipPack('🧠 Food puzzles keep the mind busy.','💧 Juicy fruit, in moderation.','🧤 Clean without strong-smelling detergents.','👥 Keep at least a pair — rats are social.'),
-      gecko: tipPack('🦗 Live food dusted with calcium.','💧 Damp moss in a hide for shedding.','🪨 The hide should be warm and dry.','🌡 A 26–32 °C gradient under the lamp.'),
-      'corn-snake': tipPack('🪤 Shedding — damp moss in the terrarium.','💧 A bowl large enough to soak in.','🌡 Leave them alone for 24–48 hours after feeding.','🍖 Feed by prey size, no more than once every 5–7 days for adults.'),
-      hedgehog: tipPack('🛁 Bathe only when needed.','🏃 A wheel and evening time out.','🐛 Protein treats, in measured amounts.','🌡 22–26 °C, no draughts.'),
-      mouse: tipPack('🪵 Nest paper without ink.','🧊 Cool matters more than extra treats.','🧹 Change bedding but leave some of the nest scent.','👥 A group of females is less stressful.'),
-      degu: tipPack('🏃 Lots of running — a large wheel.','💧 Fresh water and a dust bath.','👥 A group of two or more is important for their mood.','🌾 Hay always; sugar and fruit almost never.')
+/* Названия, свет, виды и советы — только английский (русский в каталоге). */
+const I18N_NAMES = { en: {
+  "zamioculcas": "ZZ plant",
+  "dracaena": "Dragon tree",
+  "ficus": "Weeping fig",
+  "calathea": "Calathea",
+  "anthurium": "Anthurium",
+  "caladium": "Caladium",
+  "narcissus": "Daffodil",
+  "chlorophytum-lemon": "Spider plant",
+  "nephrolepis": "Boston fern",
+  "adenium": "Desert rose",
+  "monstera": "Monstera",
+  "pothos": "Pothos",
+  "aloe": "Aloe",
+  "sansevieria": "Snake plant",
+  "philodendron": "Philodendron",
+  "begonia": "Begonia",
+  "orchid": "Orchid",
+  "cactus-barrel": "Golden barrel",
+  "cactus-opuntia": "Prickly pear",
+  "lavender": "Lavender",
+  "basil": "Basil",
+  "mint": "Mint",
+  "rosemary": "Rosemary",
+  "tulip": "Tulip",
+  "violet": "African violet",
+  "peperomia": "Peperomia",
+  "hoya": "Hoya",
+  "bromeliad": "Guzmania",
+  "spathiphyllum": "Peace lily",
+  "dieffenbachia": "Dieffenbachia",
+  "aglaonema": "Aglaonema",
+  "tradescantia": "Tradescantia",
+  "maranta": "Prayer plant",
+  "strelitzia": "Bird of paradise",
+  "yucca": "Yucca",
+  "schefflera": "Schefflera",
+  "croton": "Croton",
+  "fern-boston": "Sword fern",
+  "ivy": "Ivy",
+  "echeveria": "Echeveria",
+  "jade": "Jade plant",
+  "kalanchoe": "Kalanchoe",
+  "pilea": "Chinese money plant",
+  "rubber-plant": "Rubber plant",
+  "palm-areca": "Areca palm",
+  "citrus": "Citrus",
+  "geranium": "Geranium",
+  "spathiphyllum-mini": "Mini peace lily",
+  "oxalis": "Purple shamrock",
+  "asparagus-fern": "Asparagus fern",
+  "other": "Other"
+} };
+const I18N_LIGHTS = { en: {
+  "bright": [
+    "Plenty of bright light",
+    "The brightest spot in the home, without long midday sun. In shade the leaves shrink and fade."
+  ],
+  "diffused": [
+    "Bright indirect light",
+    "Bright indirect light by an east or west window. Midday rays scorch the leaves."
+  ],
+  "partial": [
+    "Partial shade",
+    "Soft light or partial shade. Direct sun bleaches the colour, deep shade makes it pale."
+  ],
+  "shade": [
+    "Shade",
+    "Happy deeper in the room. Direct sun is unnecessary and often harmful."
+  ],
+  "sun": [
+    "Direct sun",
+    "Needs several hours of direct sun. At the hottest midday, move it a little back from the glass."
+  ]
+} };
+const I18N_PETS = { en: {
+  "hamster": "Syrian hamster",
+  "guinea-pig": "Guinea pig",
+  "rabbit": "Pet rabbit",
+  "cat": "House cat",
+  "dog": "Dog",
+  "parrot": "Budgerigar",
+  "budgie": "Lovebird",
+  "canary": "Canary",
+  "goldfish": "Goldfish",
+  "betta": "Betta",
+  "turtle": "Red-eared slider",
+  "chinchilla": "Chinchilla",
+  "ferret": "Ferret",
+  "gerbil": "Gerbil",
+  "rat": "Pet rat",
+  "gecko": "Leopard gecko",
+  "corn-snake": "Corn snake",
+  "hedgehog": "African hedgehog",
+  "mouse": "House mouse",
+  "degu": "Degu"
+} };
+const I18N_TIPS = { en: {
+  "hamsterSeason": {
+    "spring": [
+      "🌤 Days are longer and the hamster is busier — check the wheel and add toys.",
+      "🚪 While you air the room, move the cage: spring draughts cause colds.",
+      "🥬 Introduce greens slowly, in small pieces."
+    ],
+    "summer": [
+      "🌡 Heat is dangerous above 26 °C — keep the cage out of the sun and the room cool.",
+      "🧊 A ceramic tile or cooled stone lets the hamster lie down and cool off.",
+      "💧 In heat, water spoils faster — change it more often.",
+      "🥕 Remove juicy food after 3–4 hours; it sours quickly in summer."
+    ],
+    "autumn": [
+      "🍂 Hamsters hoard more in autumn — check stores and throw out spoiled food.",
+      "🏠 Offer more paper bedding: the hamster is building a warm nest.",
+      "🌡 Once heating starts, keep the cage off the radiator and watch the dry air."
+    ],
+    "winter": [
+      "🌡 Do not let the room fall below 18 °C; near 15 °C a hamster can slip into a dangerous torpor.",
+      "🚪 Keep the cage off cold windows and draughts, but not against the radiator.",
+      "🏠 Give plenty of unscented tissue and paper bedding for the nest.",
+      "🌾 Appetite rises a little in winter — a slightly larger portion is fine, but watch the hoard."
+    ]
+  },
+  "hamsterAge": {
+    "baby": [
+      "🍼 A baby needs protein every 2–3 days: egg, low-fat cottage cheese, dried shrimp.",
+      "🤲 Tame slowly: voice and hand scent first, then a treat from the palm.",
+      "😴 Do not wake it by day or pick it up against its will."
+    ],
+    "young": [
+      "🏃 Peak energy: a solid wheel at least 28 cm across is essential.",
+      "🕳 Bedding 15–20 cm deep — young hamsters love to burrow.",
+      "🥚 Protein 2–3 times a week supports muscle.",
+      "🦷 Teeth grow for life — keep a mineral stone or fruit-wood twigs in the cage."
+    ],
+    "adult": [
+      "⚖️ Watch weight: an adult Syrian is about 120–180 g; sudden change matters.",
+      "🥜 Nuts are a treat, not the diet: too fatty for more than a couple of times a week.",
+      "🧭 Keep a routine. Hamsters like cleaning, feeding and play at similar times."
+    ],
+    "senior": [
+      "👴 After about 18 months a hamster sleeps more and runs less. That is normal.",
+      "🥣 If chewing gets harder, soften dry food with a little water.",
+      "🪜 Remove high levels and ladders — falls get more dangerous.",
+      "⚖️ Check weight and coat weekly. Fast loss or bald patches need a vet."
+    ]
+  },
+  "species": {
+    "hamster": {
+      "spring": [
+        "🌤 More activity — check the wheel and toys."
+      ],
+      "summer": [
+        "🌡 In heat, keep it cool and refresh the water more often."
+      ],
+      "autumn": [
+        "🍂 They hoard — do not let stores spoil."
+      ],
+      "winter": [
+        "🌡 Do not let the room with the cage drop below 18 °C."
+      ]
+    },
+    "guinea-pig": {
+      "spring": [
+        "✂️ Long-haired breeds may need a trim after winter."
+      ],
+      "summer": [
+        "🥒 Remove fresh vegetables after 2–3 hours."
+      ],
+      "autumn": [
+        "🏠 Warm the hide and keep it out of draughts."
+      ],
+      "winter": [
+        "🌾 Hay must always be there — it is the base of the diet all year."
+      ]
+    },
+    "rabbit": {
+      "spring": [
+        "🪮 Moulting — brush more often."
+      ],
+      "summer": [
+        "🌡 Rabbits handle heat poorly. Keep them cool."
+      ],
+      "autumn": [
+        "🥕 Add roots to the diet gradually."
+      ],
+      "winter": [
+        "🌾 Unlimited hay and water matter most in winter."
+      ]
+    },
+    "cat": {
+      "spring": [
+        "🏃 Play more after the lazy winter."
+      ],
+      "summer": [
+        "💧 Keep the tray and water bowls clean and cool."
+      ],
+      "autumn": [
+        "🧹 Check the carrier and vaccines before the season."
+      ],
+      "winter": [
+        "🛁 Brushing helps with the seasonal moult."
+      ]
+    },
+    "dog": {
+      "spring": [
+        "🩺 Tick protection after winter."
+      ],
+      "summer": [
+        "🚶 Walk early and late; avoid hot asphalt."
+      ],
+      "autumn": [
+        "🦴 Watch weight as activity drops."
+      ],
+      "winter": [
+        "🧣 Short-coated dogs may need a coat outside."
+      ]
+    },
+    "parrot": {
+      "spring": [
+        "🪶 Moult — add protein and calcium."
+      ],
+      "summer": [
+        "🛁 A bath or a mist helps in the heat."
+      ],
+      "autumn": [
+        "🧸 New toys keep them busy as days shorten."
+      ],
+      "winter": [
+        "🌡 No draughts, but daily access to light."
+      ]
+    },
+    "budgie": {
+      "spring": [
+        "🪺 If you keep a pair, watch nesting."
+      ],
+      "summer": [
+        "💧 Fresh water twice a day."
+      ],
+      "autumn": [
+        "🧹 Disinfect perches and dishes."
+      ],
+      "winter": [
+        "🌾 Varied food, without too many fatty seeds."
+      ]
+    },
+    "canary": {
+      "spring": [
+        "🥚 In the breeding season, offer protein and greens."
+      ],
+      "summer": [
+        "🛁 A shallow bath dish."
+      ],
+      "autumn": [
+        "🌡 No sudden temperature swings."
+      ],
+      "winter": [
+        "☀️ Extra light keeps song and activity going."
+      ]
+    },
+    "goldfish": {
+      "spring": [
+        "🧹 After winter, a thorough clean without a sudden full water change."
+      ],
+      "summer": [
+        "💧 Aeration and partial water changes in the heat."
+      ],
+      "autumn": [
+        "🐟 Feed less if the tank cools."
+      ],
+      "winter": [
+        "🌡 In cool water they are less active — feed less often."
+      ]
+    },
+    "betta": {
+      "spring": [
+        "🪴 Live plants improve the water."
+      ],
+      "summer": [
+        "🧊 Do not let the water rise above 30 °C."
+      ],
+      "autumn": [
+        "💧 Change 20–30 % of the water once a week."
+      ],
+      "winter": [
+        "🌡 A steady 24–28 °C — a heater is essential."
+      ]
+    },
+    "turtle": {
+      "spring": [
+        "🩺 After a slow winter, check them if appetite is weak."
+      ],
+      "summer": [
+        "☀️ Outdoor sun only while you watch."
+      ],
+      "autumn": [
+        "🌡 Young turtles need warmth, not a winter sleep."
+      ],
+      "winter": [
+        "💡 A UV lamp for 10–12 hours a day."
+      ]
+    },
+    "chinchilla": {
+      "spring": [
+        "🌾 Hay and pellets, treats in moderation."
+      ],
+      "summer": [
+        "❄️ Cool only: above 25 °C is dangerous."
+      ],
+      "autumn": [
+        "🧹 Dry cleaning. Do not wash the cage wet."
+      ],
+      "winter": [
+        "🛁 A dust bath, regularly."
+      ]
+    },
+    "ferret": {
+      "spring": [
+        "🩺 Vaccines and parasite protection on the vet’s schedule."
+      ],
+      "summer": [
+        "💧 Water and a cool place are essential."
+      ],
+      "autumn": [
+        "🧸 New tunnels when outdoor time drops."
+      ],
+      "winter": [
+        "🏃 Lots of movement — at least 4 hours out of the cage."
+      ]
+    },
+    "gerbil": {
+      "spring": [
+        "🪵 Fresh twigs to wear the teeth down."
+      ],
+      "summer": [
+        "🧊 Slightly cool sand — they dig burrows."
+      ],
+      "autumn": [
+        "🧹 Do not overfill the bedding; dryness matters."
+      ],
+      "winter": [
+        "🌾 Pellets and hay, few extra nuts."
+      ]
+    },
+    "rat": {
+      "spring": [
+        "🧠 Food puzzles keep the mind busy."
+      ],
+      "summer": [
+        "💧 Juicy fruit, in moderation."
+      ],
+      "autumn": [
+        "🧤 Clean without strong-smelling detergents."
+      ],
+      "winter": [
+        "👥 Keep at least a pair — rats are social."
+      ]
+    },
+    "gecko": {
+      "spring": [
+        "🦗 Live food dusted with calcium."
+      ],
+      "summer": [
+        "💧 Damp moss in a hide for shedding."
+      ],
+      "autumn": [
+        "🪨 The hide should be warm and dry."
+      ],
+      "winter": [
+        "🌡 A 26–32 °C gradient under the lamp."
+      ]
+    },
+    "corn-snake": {
+      "spring": [
+        "🪤 Shedding — damp moss in the terrarium."
+      ],
+      "summer": [
+        "💧 A bowl large enough to soak in."
+      ],
+      "autumn": [
+        "🌡 Leave them alone for 24–48 hours after feeding."
+      ],
+      "winter": [
+        "🍖 Feed by prey size, no more than once every 5–7 days for adults."
+      ]
+    },
+    "hedgehog": {
+      "spring": [
+        "🛁 Bathe only when needed."
+      ],
+      "summer": [
+        "🏃 A wheel and evening time out."
+      ],
+      "autumn": [
+        "🐛 Protein treats, in measured amounts."
+      ],
+      "winter": [
+        "🌡 22–26 °C, no draughts."
+      ]
+    },
+    "mouse": {
+      "spring": [
+        "🪵 Nest paper without ink."
+      ],
+      "summer": [
+        "🧊 Cool matters more than extra treats."
+      ],
+      "autumn": [
+        "🧹 Change bedding but leave some of the nest scent."
+      ],
+      "winter": [
+        "👥 A group of females is less stressful."
+      ]
+    },
+    "degu": {
+      "spring": [
+        "🏃 Lots of running — a large wheel."
+      ],
+      "summer": [
+        "💧 Fresh water and a dust bath."
+      ],
+      "autumn": [
+        "👥 A group of two or more is important for their mood."
+      ],
+      "winter": [
+        "🌾 Hay always; sugar and fruit almost never."
+      ]
     }
   }
-};
+} };

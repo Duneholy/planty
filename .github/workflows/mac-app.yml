@@ -9,7 +9,7 @@ permissions:
 jobs:
   dmg:
     runs-on: macos-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -20,16 +20,19 @@ jobs:
 
       - run: npm ci
       - run: npm install --no-save electron electron-builder
+      - run: chmod +x "mac/Install Planty.command"
 
-      - name: Build Planty.dmg
-        run: npx electron-builder --mac dmg --universal --publish never
+      - name: Build Planty for macOS
+        run: npx electron-builder --mac dmg zip --universal --publish never
         env:
-          CSC_IDENTITY_AUTO_DISCOVERY: false
+          CSC_IDENTITY_AUTO_DISCOVERY: true
 
-      - name: Attach the Mac app to the release
+      - name: Attach Mac builds to the latest release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0
-          files: dist/*.dmg
+          tag_name: v1.0.1
+          files: |
+            dist/*.dmg
+            dist/*-mac.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

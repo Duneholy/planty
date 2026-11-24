@@ -2047,7 +2047,7 @@ function setAuthMode(mode) {
 
 function applyChrome() {
   document.title = t('app.title');
-  document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : lang;
+  document.documentElement.lang = lang;
   const logo = document.getElementById('logo');
   if (logo) logo.innerHTML = lang === 'ru' ? 'Поли<span>вай</span>ка' : 'Pl<span>ant</span>y';
   const appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');

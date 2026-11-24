@@ -6,4 +6,5 @@ node_modules/
 data/
 runtime/
 dist/
+lib/plant-care-i18n-packs.partial.json
 public/_care_*.js

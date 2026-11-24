@@ -70,7 +70,7 @@ function publicSettings(s) {
     lon: src.lon ?? null,
     timezone: src.timezone || accounts.serverTimeZone(),
     weatherProvider: src.weatherProvider || 'open-meteo',
-    language: ['en', 'ru', 'es', 'de', 'vi', 'zh', 'fr', 'it', 'hi', 'ja'].includes(src.language) ? src.language : null,
+    language: ['en', 'ru'].includes(src.language) ? src.language : null,
     ai: {
       provider: ai.provider === 'gigachat' ? 'gigachat' : 'openrouter',
       openrouterModel: ai.openrouterModel || OPENROUTER_MODELS[0].id,
@@ -706,7 +706,7 @@ app.post('/api/auth/register', (req, res) => {
     plants: [],
     pets: [],
     deletedPlantIds: [],
-    settings: { lat: null, lon: null, language: ['en', 'ru', 'es', 'de', 'vi', 'zh', 'fr', 'it', 'hi', 'ja'].includes(req.body.language) ? req.body.language : 'ru' }
+    settings: { lat: null, lon: null, language: ['en', 'ru'].includes(req.body.language) ? req.body.language : 'ru' }
   }));
   issueSession(res, user);
   res.json({ user: { id: user.id, nick: user.nick } });
@@ -1033,7 +1033,7 @@ app.post('/api/settings', (req, res) => {
     s.timezone = body.timezone;
   }
   if (body.language !== undefined) {
-    const allowed = ['en', 'ru', 'es', 'de', 'vi', 'zh', 'fr', 'it', 'hi', 'ja'];
+    const allowed = ['en', 'ru'];
     if (!allowed.includes(body.language)) return res.status(400).json({ error: 'Неизвестный язык' });
     s.language = body.language;
   }
@@ -1202,10 +1202,7 @@ function plantAgeText(acquiredAt) {
 
 function replyLanguageName() {
   const id = (userDb().settings && userDb().settings.language) || 'ru';
-  const names = {
-    en: 'английском', ru: 'русском', es: 'испанском', de: 'немецком', vi: 'вьетнамском',
-    zh: 'китайском', fr: 'французском', it: 'итальянском', hi: 'хинди', ja: 'японском'
-  };
+  const names = { en: 'английском', ru: 'русском' };
   return names[id] || 'русском';
 }
 
