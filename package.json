@@ -1,0 +1,16 @@
+{
+  "name": "planty",
+  "version": "1.0.0",
+  "description": "Planty — home plant and pet care. In Russian the app is called Поливайка.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

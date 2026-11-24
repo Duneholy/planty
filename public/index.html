@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Поливайка — уход за растениями</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-title" content="Поливайка">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#2E9E52">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <h1 class="logo" id="logo">Поли<span>вай</span>ка</h1>
+        <p class="tagline" id="tagline">все политы — все счастливы</p>
+      </div>
+      <div class="topbar-actions" id="topbarActions" hidden>
+        <span class="who" id="whoName"></span>
+        <button type="button" class="btn btn-swipe" id="swipeBtn">Свайпать</button>
+        <button type="button" class="btn btn-ghost" id="settingsBtn">Настройки</button>
+      </div>
+    </div>
+    <div class="gingham" aria-hidden="true"></div>
+  </header>
+
+  <main class="page">
+    <div class="dash">
+    <section class="calendar-card" id="calSection" aria-label="Календарь поливов">
+      <div class="calendar-head">
+        <button class="cal-nav" id="calPrev" aria-label="Предыдущий месяц">‹</button>
+        <h2 class="cal-title" id="calTitle"></h2>
+        <button class="cal-nav" id="calNext" aria-label="Следующий месяц">›</button>
+      </div>
+      <div class="cal-weekdays" id="calWeekdays"></div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend" id="calLegend"></div>
+      <div class="cal-day-details" id="calDayDetails" hidden></div>
+    </section>
+
+    <div class="dash-right">
+      <section class="weather-card" aria-label="Погода" id="weatherCard"></section>
+      <section class="today-card" id="todaySection" aria-label="Сделать сегодня">
+        <h2 class="today-title" id="todayTitle">💧 Сделать сегодня</h2>
+        <div id="todayList"></div>
+      </section>
+    </div>
+    </div>
+
+    <section id="plantsSection" aria-label="Мои растения">
+      <div class="section-head">
+        <h2 class="section-title" id="plantsTitle">Мои растения</h2>
+        <button type="button" class="btn btn-green btn-add" id="addPlantBtn">＋ Растение</button>
+      </div>
+      <div class="plant-grid" id="plantGrid"></div>
+    </section>
+
+    <section id="petsSection" aria-label="Мои питомцы">
+      <div class="section-head">
+        <h2 class="section-title" id="petsTitle">Мои питомцы</h2>
+        <button type="button" class="btn btn-green btn-add" id="addPetBtn">＋ Питомец</button>
+      </div>
+      <div class="plant-grid" id="petGrid"></div>
+    </section>
+  </main>
+
+  <footer class="footer"><span id="footerBrand">🌿 Поливайка</span> · <a href="https://github.com/Duneholy" target="_blank" rel="noopener">Yury Mikhno</a></footer>
+
+  <div class="modal-backdrop confirm-backdrop" id="confirmBackdrop" hidden>
+    <div class="modal confirm-sheet" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <h2 id="confirmTitle"></h2>
+      <p id="confirmText"></p>
+      <div class="confirm-actions">
+        <button type="button" class="btn btn-ghost" id="confirmCancel">Оставить</button>
+        <button type="button" class="btn btn-danger-fill" id="confirmOk">Удалить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Мастер добавления -->
+  <div class="modal-backdrop" id="formBackdrop" hidden>
+    <div class="modal form-modal" role="dialog" aria-modal="true" id="formModal">
+      <button class="modal-close" id="formClose" aria-label="Закрыть">✕</button>
+      <div id="formContent"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop date-backdrop" id="dateBackdrop" hidden>
+    <div class="modal date-sheet" role="dialog" aria-modal="true" aria-labelledby="dateTitle">
+      <button class="modal-close" id="dateClose" type="button" aria-label="Закрыть">✕</button>
+      <h2 id="dateTitle">В доме с</h2>
+      <div class="calendar-head">
+        <button class="cal-nav" id="datePrev" type="button" aria-label="Предыдущий месяц">‹</button>
+        <h3 class="cal-title" id="dateTitleMonth"></h3>
+        <button class="cal-nav" id="dateNext" type="button" aria-label="Следующий месяц">›</button>
+      </div>
+      <div class="cal-weekdays" id="dateWeekdays"></div>
+      <div class="cal-grid" id="dateGrid"></div>
+    </div>
+  </div>
+
+  <!-- Модалка растения -->
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" id="modal">
+      <button class="modal-close" id="modalClose" aria-label="Закрыть">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="settingsBackdrop" hidden>
+    <div class="modal form-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <button class="modal-close" id="settingsClose" aria-label="Закрыть">✕</button>
+      <div id="settingsContent"></div>
+    </div>
+  </div>
+
+  <div class="lock" id="lockScreen">
+    <div class="lock-card" id="lockCard">
+      <div class="lock-emoji">🌿</div>
+      <label class="lang-field">
+        <span id="authLangCaption">Язык</span>
+        <select class="field-input" id="authLang"></select>
+      </label>
+      <h2 class="lock-title" id="authTitle">Вход</h2>
+      <form class="auth-form" id="authForm">
+        <label><span id="authNickLabel">Ник</span>
+          <input class="field-input" id="authNick" name="nick" autocomplete="username" required minlength="3" maxlength="32">
+        </label>
+        <label><span id="authPassLabel">Пароль</span>
+          <input class="field-input" id="authPass" name="password" type="password" autocomplete="current-password" required minlength="6" maxlength="128">
+        </label>
+        <p class="auth-error" id="authError" hidden></p>
+        <button class="btn btn-green form-submit" type="submit" id="authSubmit">Войти</button>
+      </form>
+      <p class="auth-switch"><button type="button" class="btn btn-ghost" id="authMode">Нет аккаунта — регистрация</button></p>
+    </div>
+  </div>
+
+  <div class="swipe-layer" id="swipeLayer" hidden>
+    <button type="button" class="swipe-close" id="swipeClose" aria-label="Закрыть свайпы">✕</button>
+    <div class="swipe-frame">
+      <p class="swipe-count" id="swipeCount"></p>
+      <div class="swipe-stack" id="swipeStack"></div>
+      <div class="swipe-actions" id="swipeActions">
+        <button type="button" class="swipe-no" id="swipeNo">Пропустить</button>
+        <button type="button" class="swipe-yes" id="swipeYes">Готово</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="i18n-content.js"></script>
+  <script src="i18n-care.js"></script>
+  <script src="art.js"></script>
+  <script src="gallery.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
