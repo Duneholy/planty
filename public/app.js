@@ -1,5 +1,7 @@
 /* ————— Поливайка: логика ————— */
 
+const AI_PROVIDER_IDS = ['openrouter', 'openai', 'gigachat'];
+
 const state = {
   plants: [],
   pets: [],
@@ -186,7 +188,7 @@ async function readOpenRouterModels(key) {
     .filter((model) => model.id);
 }
 
-async function completeOpenRouter(key, model, messages) {
+async function completeOpenRouter(key, model, messages, maxTokens = 1024) {
   let res;
   try {
     res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -195,7 +197,7 @@ async function completeOpenRouter(key, model, messages) {
         Authorization: `Bearer ${key}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ model, temperature: 0.4, max_tokens: 1024, messages })
+      body: JSON.stringify({ model, temperature: 0.4, max_tokens: maxTokens, messages })
     });
   } catch (_) {
     throw new Error(t('replyOffline'));
@@ -836,7 +838,11 @@ function renderModal() {
   </div>
 
   <div class="m-section">
-    <h3>${t('care')}</h3>
+    <div class="care-head">
+      <h3>${t('care')}</h3>
+      ${raw.artId === 'other' ? `<button type="button" class="btn btn-ghost btn-ai" id="fillCareAi" ${state.llmEnabled ? '' : 'disabled'}>${t('fillAi')}</button>` : ''}
+    </div>
+    ${raw.artId === 'other' && !state.llmEnabled ? `<p class="form-note care-ai-hint">${t('fillAiNeed')}</p>` : ''}
     <div class="care-block">
       <h4>${t('light')}</h4>
       <p>${p.lightFull}</p>
@@ -1048,8 +1054,51 @@ function wireChat(ownerId, opts) {
   });
 }
 
+function openAiCare(plant) {
+  if (!state.llmEnabled || plant.artId !== 'other') return;
+  state.aiCarePlantId = plant.id;
+  $('#aiCareTitle').textContent = t('fillAiTitle');
+  $('#aiCareText').textContent = t('fillAiHint');
+  $('#aiCareLatin').value = plant.latin && plant.latin !== '—' ? plant.latin : '';
+  $('#aiCareLatin').placeholder = t('fillAiPh');
+  $('#aiCareCancel').textContent = t('cancel');
+  $('#aiCareOk').textContent = t('fillAiGo');
+  $('#aiCareOk').disabled = false;
+  $('#aiCareBackdrop').hidden = false;
+  $('#aiCareLatin').focus();
+}
+
+function closeAiCare() {
+  $('#aiCareBackdrop').hidden = true;
+  state.aiCarePlantId = null;
+}
+
+async function submitAiCare() {
+  const id = state.aiCarePlantId;
+  const latin = $('#aiCareLatin').value.trim();
+  if (!id) return;
+  if (!latin) { toast(t('err.needLatin')); return; }
+  $('#aiCareOk').disabled = true;
+  try {
+    let data = await api(`/api/plants/${id}/ai-care`, { method: 'POST', body: { latin } });
+    if (data.relay === 'openrouter') {
+      const reply = await completeOpenRouter(data.key, data.model, data.messages, data.maxTokens || 1600);
+      await api(`/api/plants/${id}/ai-care/apply`, { method: 'POST', body: { latin, reply } });
+    }
+    closeAiCare();
+    await loadPlants();
+    renderAll();
+    toast(t('fillAiDone'));
+  } catch (err) {
+    toast(err.message);
+    if ($('#aiCareOk')) $('#aiCareOk').disabled = false;
+  }
+}
+
 function wireModal(p) {
   $('#deletePlantBtn').addEventListener('click', () => deletePlant(p.id));
+  const fillBtn = $('#fillCareAi');
+  if (fillBtn) fillBtn.addEventListener('click', () => openAiCare(p));
 
   // возраст
   $('#ageEdit').addEventListener('click', () => {
@@ -1345,7 +1394,7 @@ function petTipList(pet) {
 }
 function viewPlant(p) {
   const named = { ...p, name: displayPlantName(p) };
-  if (lang === 'ru') return named;
+  if (lang === 'ru' || p.aiCare) return named;
   const care = typeof CARE !== 'undefined' && ((CARE[lang] && CARE[lang][p.artId]) || (CARE.en && CARE.en[p.artId]));
   const custom = p.careTips && String(p.careTips[0] || '').startsWith('Параметры ухода');
   if (p.artId !== 'other' && care && !custom) return { ...named, ...care };
@@ -2140,9 +2189,16 @@ function closeSettings() {
   document.body.style.overflow = (state.openPlantId || state.openPetId) ? 'hidden' : '';
 }
 
-function placeName(id, fallback) {
-  const text = t('place.' + id);
-  return text === 'place.' + id ? (fallback || '') : text;
+function providerHasKey(ai, provider) {
+  if (provider === 'gigachat') return Boolean(ai.hasGigachatKey);
+  if (provider === 'openai') return Boolean(ai.hasOpenaiKey);
+  return Boolean(ai.hasOpenrouterKey);
+}
+
+function savedModelId(ai, provider) {
+  if (provider === 'gigachat') return ai.gigachatModel || '';
+  if (provider === 'openai') return ai.openaiModel || '';
+  return ai.openrouterModel || '';
 }
 
 function scopeName(scope) {
@@ -2151,17 +2207,13 @@ function scopeName(scope) {
   return t('scope.PERS');
 }
 
-function savedModelId(ai, provider) {
-  return provider === 'gigachat' ? (ai.gigachatModel || '') : (ai.openrouterModel || '');
-}
-
 function openSettings() {
   const s = state.settings || {};
   const ai = s.ai || {};
   const cat = state.catalog || {};
   const tz = s.timezone || cat.serverTimezone || '';
   const zones = cat.timezones || [];
-  const provider = ai.provider === 'gigachat' ? 'gigachat' : 'openrouter';
+  const provider = AI_PROVIDER_IDS.includes(ai.provider) ? ai.provider : 'openrouter';
   const saved = savedModelId(ai, provider);
   $('#settingsContent').innerHTML = `
     <form id="settingsForm">
@@ -2185,13 +2237,14 @@ function openSettings() {
       <div class="m-section">
         <h3>${t('weatherProv')}</h3>
         <select class="field-input" id="weatherProvider">
-          ${(cat.weatherProviders || []).map((p) => `<option value="${p.id}" ${p.id === (s.weatherProvider || 'open-meteo') ? 'selected' : ''}>${escHtml(p.name)} · ${escHtml(placeName(p.id, p.place))}</option>`).join('')}
+          ${(cat.weatherProviders || []).map((p) => `<option value="${p.id}" ${p.id === (s.weatherProvider || 'open-meteo') ? 'selected' : ''}>${escHtml(p.name)}</option>`).join('')}
         </select>
       </div>
       <div class="m-section">
         <h3>${t('llm')}</h3>
         <select class="field-input" id="aiProvider">
           <option value="openrouter" ${provider === 'openrouter' ? 'selected' : ''}>OpenRouter</option>
+          <option value="openai" ${provider === 'openai' ? 'selected' : ''}>${t('openai')}</option>
           <option value="gigachat" ${provider === 'gigachat' ? 'selected' : ''}>${t('sber')}</option>
         </select>
         <label class="stack-label" id="gigaScopeWrap">${t('sberAccess')}
@@ -2225,15 +2278,15 @@ function openSettings() {
   const syncProvider = () => {
     const next = $('#aiProvider').value;
     $('#gigaScopeWrap').hidden = next !== 'gigachat';
-    const hasKey = next === 'gigachat' ? ai.hasGigachatKey : ai.hasOpenrouterKey;
+    const hasKey = providerHasKey(ai, next);
     $('#aiKey').placeholder = hasKey
       ? t('keySavedPh')
-      : (next === 'gigachat' ? t('sberKeyPh') : 'sk-or-v1-...');
+      : (next === 'gigachat' ? t('sberKeyPh') : next === 'openai' ? 'sk-...' : 'sk-or-v1-...');
     $('#modelSection').hidden = true;
     $('#customModelWrap').hidden = true;
     $('#aiModel').innerHTML = '';
     const current = savedModelId(ai, next);
-    const hasSavedKey = next === 'gigachat' ? ai.hasGigachatKey : ai.hasOpenrouterKey;
+    const hasSavedKey = providerHasKey(ai, next);
     const note = $('#savedModelNote');
     note.hidden = !current || !hasSavedKey;
     note.textContent = current ? t('savedAs', { id: current }) : '';
@@ -2257,7 +2310,7 @@ function openSettings() {
   $('#loadModelsBtn').addEventListener('click', async () => {
     const next = $('#aiProvider').value;
     const key = $('#aiKey').value.trim();
-    const hasKey = next === 'gigachat' ? ai.hasGigachatKey : ai.hasOpenrouterKey;
+    const hasKey = providerHasKey(ai, next);
     if (!key && !hasKey) { toast(t('needKey')); return; }
     $('#loadModelsBtn').disabled = true;
     try {
@@ -2308,11 +2361,13 @@ function openSettings() {
     }
     if (model) {
       if (next === 'gigachat') payload.ai.gigachatModel = model;
+      else if (next === 'openai') payload.ai.openaiModel = model;
       else payload.ai.openrouterModel = model;
     }
     const key = $('#aiKey').value.trim();
     if (key) {
       if (next === 'gigachat') payload.ai.gigachatKey = key;
+      else if (next === 'openai') payload.ai.openaiKey = key;
       else payload.ai.openrouterKey = key;
     }
     try {
@@ -2347,6 +2402,12 @@ $('#authForm').addEventListener('submit', async (e) => {
   }
 });
 $('#settingsBtn').addEventListener('click', openSettings);
+$('#aiCareCancel').addEventListener('click', closeAiCare);
+$('#aiCareOk').addEventListener('click', submitAiCare);
+$('#aiCareBackdrop').addEventListener('click', (e) => { if (e.target === $('#aiCareBackdrop')) closeAiCare(); });
+$('#aiCareLatin').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); submitAiCare(); }
+});
 $('#swipeBtn').addEventListener('click', openSwipe);
 $('#swipeClose').addEventListener('click', closeSwipe);
 $('#swipeYes').addEventListener('click', () => commitSwipe('right'));

@@ -675,6 +675,18 @@ b.now.st-bad  { color: var(--danger); }
 #savedModelNote[hidden] { display: none !important; }
 .btn-load { width: 100%; margin-top: 10px; }
 .btn-block { width: 100%; }
+.care-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.care-head h3 { margin-bottom: 0; }
+.btn-ai { font-size: 13.5px; padding: 8px 12px; white-space: nowrap; }
+.btn-ai:disabled { opacity: .45; cursor: not-allowed; }
+.care-ai-hint { margin: -4px 0 12px; }
+#aiCareLatin { margin-bottom: 16px; }
 .m-section h3 {
   font-family: var(--font-display);
   font-weight: 500;

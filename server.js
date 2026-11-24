@@ -6,7 +6,7 @@ const { AsyncLocalStorage } = require('async_hooks');
 const { PLANT_ART_IDS, PLANT_ACCENTS, PLANT_META, LIGHT_OPTIONS, EMOJI_PICKER, PET_SPECIES } = require('./catalogs');
 const accounts = require('./lib/accounts');
 const { PROVIDERS: WEATHER_PROVIDERS, fetchWeather } = require('./lib/weather');
-const { OPENROUTER_MODELS, GIGACHAT_MODELS, GIGACHAT_SCOPES, completeChat, listModels } = require('./lib/ai');
+const { OPENROUTER_MODELS, OPENAI_MODELS, GIGACHAT_MODELS, GIGACHAT_SCOPES, completeChat, listModels } = require('./lib/ai');
 const { PLANT_CARE } = require('./lib/plant-care');
 
 // Подхватываем .env из папки проекта (переменные из окружения имеют приоритет)
@@ -56,9 +56,12 @@ function isTimeZone(tz) {
   }
 }
 
+const AI_PROVIDERS = ['openrouter', 'openai', 'gigachat'];
+
 function llmReady(settings) {
   const ai = (settings && settings.ai) || {};
   if (ai.provider === 'gigachat') return Boolean(ai.gigachatKey);
+  if (ai.provider === 'openai') return Boolean(ai.openaiKey);
   return Boolean(ai.openrouterKey);
 }
 
@@ -72,11 +75,13 @@ function publicSettings(s) {
     weatherProvider: src.weatherProvider || 'open-meteo',
     language: ['en', 'ru'].includes(src.language) ? src.language : null,
     ai: {
-      provider: ai.provider === 'gigachat' ? 'gigachat' : 'openrouter',
+      provider: AI_PROVIDERS.includes(ai.provider) ? ai.provider : 'openrouter',
       openrouterModel: ai.openrouterModel || OPENROUTER_MODELS[0].id,
+      openaiModel: ai.openaiModel || OPENAI_MODELS[0].id,
       gigachatModel: ai.gigachatModel || 'GigaChat-2-Pro',
       gigachatScope: ai.gigachatScope || 'GIGACHAT_API_PERS',
       hasOpenrouterKey: Boolean(ai.openrouterKey),
+      hasOpenaiKey: Boolean(ai.openaiKey),
       hasGigachatKey: Boolean(ai.gigachatKey)
     }
   };
@@ -311,10 +316,11 @@ function migrate(data) {
   if (!data.settings.timezone) data.settings.timezone = accounts.serverTimeZone();
   if (!data.settings.weatherProvider) data.settings.weatherProvider = 'open-meteo';
   data.settings.ai = data.settings.ai || {};
-  if (data.settings.ai.provider !== 'openrouter' && data.settings.ai.provider !== 'gigachat') {
+  if (!AI_PROVIDERS.includes(data.settings.ai.provider)) {
     data.settings.ai.provider = 'openrouter';
   }
   if (!data.settings.ai.openrouterModel) data.settings.ai.openrouterModel = OPENROUTER_MODELS[0].id;
+  if (!data.settings.ai.openaiModel) data.settings.ai.openaiModel = OPENAI_MODELS[0].id;
   if (!data.settings.ai.gigachatModel) data.settings.ai.gigachatModel = 'GigaChat-2-Pro';
   if (!data.settings.ai.gigachatScope) data.settings.ai.gigachatScope = 'GIGACHAT_API_PERS';
   data.deletedPlantIds = Array.isArray(data.deletedPlantIds)
@@ -761,7 +767,7 @@ app.get('/api/plants', async (req, res) => {
       timezones: timezoneChoices(),
       serverTimezone: accounts.serverTimeZone(),
       weatherProviders: WEATHER_PROVIDERS,
-      aiModels: { openrouter: OPENROUTER_MODELS, gigachat: GIGACHAT_MODELS },
+      aiModels: { openrouter: OPENROUTER_MODELS, openai: OPENAI_MODELS, gigachat: GIGACHAT_MODELS },
       gigachatScopes: GIGACHAT_SCOPES
     }
   });
@@ -1046,15 +1052,19 @@ app.post('/api/settings', (req, res) => {
   }
   if (body.ai && typeof body.ai === 'object') {
     const ai = s.ai;
-    if (body.ai.provider === 'openrouter' || body.ai.provider === 'gigachat') ai.provider = body.ai.provider;
+    if (AI_PROVIDERS.includes(body.ai.provider)) ai.provider = body.ai.provider;
     if (typeof body.ai.openrouterModel === 'string' && body.ai.openrouterModel.trim()) {
       ai.openrouterModel = body.ai.openrouterModel.trim().slice(0, 120);
+    }
+    if (typeof body.ai.openaiModel === 'string' && body.ai.openaiModel.trim()) {
+      ai.openaiModel = body.ai.openaiModel.trim().slice(0, 80);
     }
     if (typeof body.ai.gigachatModel === 'string' && body.ai.gigachatModel.trim()) {
       ai.gigachatModel = body.ai.gigachatModel.trim().slice(0, 80);
     }
     if (GIGACHAT_SCOPES.some((scope) => scope.id === body.ai.gigachatScope)) ai.gigachatScope = body.ai.gigachatScope;
     if (typeof body.ai.openrouterKey === 'string' && body.ai.openrouterKey.trim()) ai.openrouterKey = body.ai.openrouterKey.trim();
+    if (typeof body.ai.openaiKey === 'string' && body.ai.openaiKey.trim()) ai.openaiKey = body.ai.openaiKey.trim();
     if (typeof body.ai.gigachatKey === 'string' && body.ai.gigachatKey.trim()) ai.gigachatKey = body.ai.gigachatKey.trim();
   }
   if (dropWeather) {
@@ -1282,10 +1292,11 @@ ${comp.tips.map((t) => `- ${t}`).join('\n')}
 }
 
 app.post('/api/ai/models', async (req, res) => {
-  const provider = req.body.provider === 'gigachat' ? 'gigachat' : 'openrouter';
+  const provider = AI_PROVIDERS.includes(req.body.provider) ? req.body.provider : 'openrouter';
   const ai = userDb().settings.ai || {};
   const typed = typeof req.body.key === 'string' ? req.body.key.trim() : '';
-  const key = typed || (provider === 'gigachat' ? ai.gigachatKey : ai.openrouterKey);
+  const stored = provider === 'gigachat' ? ai.gigachatKey : provider === 'openai' ? ai.openaiKey : ai.openrouterKey;
+  const key = typed || stored;
   if (!key) return res.status(400).json({ error: 'Сначала введите API-ключ' });
   const scope = GIGACHAT_SCOPES.some((item) => item.id === req.body.scope)
     ? req.body.scope
@@ -1320,7 +1331,7 @@ app.get('/api/ai/openrouter-key', (req, res) => {
 app.post('/api/chat', async (req, res) => {
   const ai = userDb().settings.ai || {};
   if (!llmReady(userDb().settings)) {
-    return res.status(503).json({ error: 'Чат выключен: в настройках укажите ключ OpenRouter или Сбера.' });
+    return res.status(503).json({ error: 'Чат выключен: в настройках укажите ключ OpenRouter, OpenAI или Сбера.' });
   }
   const plant = req.body.plantId ? findPlant(req.body.plantId) : null;
   const pet = !plant && req.body.petId ? findPet(req.body.petId) : null;
@@ -1351,7 +1362,7 @@ app.post('/api/chat', async (req, res) => {
 
   // С Raspberry Pi исходящий TLS до OpenRouter обрывается. Браузер пользователя до него достучался —
   // он и забирает ответ, а сервер только собирает промпт и сохраняет реплики.
-  if (ai.provider !== 'gigachat') {
+  if (ai.provider === 'openrouter') {
     return res.json({
       relay: 'openrouter',
       model: ai.openrouterModel || OPENROUTER_MODELS[0].id,
@@ -1384,6 +1395,143 @@ app.post('/api/chat/commit', (req, res) => {
   const target = appendChatTurn(subject, chat, message, reply);
   saveData();
   res.json({ reply, chatId: target.id });
+});
+
+function clipText(value, max) {
+  return String(value || '').replace(/\s+/g, ' ').trim().slice(0, max);
+}
+
+function numIn(value, min, max) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  return Math.round(Math.min(max, Math.max(min, n)));
+}
+
+function parseCareReply(text) {
+  let raw = String(text || '').trim();
+  const fence = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) raw = fence[1].trim();
+  const start = raw.indexOf('{');
+  const end = raw.lastIndexOf('}');
+  if (start < 0 || end <= start) throw new Error('Не удалось разобрать ответ модели');
+  let data;
+  try { data = JSON.parse(raw.slice(start, end + 1)); } catch (_) {
+    throw new Error('Не удалось разобрать ответ модели');
+  }
+  const tempMin = numIn(data.tempMin, -5, 45);
+  const tempMax = numIn(data.tempMax, -5, 45);
+  const humMin = numIn(data.humMin, 0, 100);
+  const humMax = numIn(data.humMax, 0, 100);
+  const lightShort = clipText(data.lightShort, 48);
+  const lightFull = clipText(data.lightFull, 700);
+  const humidityFull = clipText(data.humidityFull, 700);
+  const temperatureFull = clipText(data.temperatureFull, 700);
+  const careTips = (Array.isArray(data.careTips) ? data.careTips : [])
+    .map((tip) => clipText(tip, 240))
+    .filter(Boolean)
+    .slice(0, 6);
+  if (tempMin == null || tempMax == null || tempMin > tempMax) throw new Error('Не удалось разобрать ответ модели');
+  if (humMin == null || humMax == null || humMin > humMax) throw new Error('Не удалось разобрать ответ модели');
+  if (!lightShort || !lightFull || !humidityFull || !temperatureFull || !careTips.length) {
+    throw new Error('Не удалось разобрать ответ модели');
+  }
+  return { tempMin, tempMax, humMin, humMax, lightShort, lightFull, humidityFull, temperatureFull, careTips };
+}
+
+function careFillMessages(latin) {
+  return [
+    {
+      role: 'system',
+      content: `Ты домашний ботаник. Верни только JSON без пояснений и без markdown.
+Текстовые поля напиши на ${replyLanguageName()} языке. Температура в °C, влажность в процентах.
+Схема:
+{"lightShort":"короткая подпись света","lightFull":"абзац про свет","humMin":40,"humMax":70,"humidityFull":"абзац про влажность","tempMin":18,"tempMax":26,"temperatureFull":"абзац про температуру","careTips":["совет","совет","совет","совет"]}
+careTips — 4 или 5 конкретных советов: полив, грунт, подкормка, типичные ошибки.`
+    },
+    { role: 'user', content: `Латинское название: ${latin}` }
+  ];
+}
+
+function readLatinName(body) {
+  const latin = typeof body.latin === 'string' ? body.latin.trim().replace(/\s+/g, ' ').slice(0, 120) : '';
+  if (!/^[\p{L}\p{M}0-9 .'\-×x()]{2,120}$/u.test(latin)) return '';
+  return latin;
+}
+
+function applyAiCare(plant, care, latin) {
+  plant.latin = latin;
+  plant.lightShort = care.lightShort;
+  plant.lightFull = care.lightFull;
+  plant.humMin = care.humMin;
+  plant.humMax = care.humMax;
+  plant.humidityFull = care.humidityFull;
+  plant.tempMin = care.tempMin;
+  plant.tempMax = care.tempMax;
+  plant.temperatureFull = care.temperatureFull;
+  plant.careTips = care.careTips;
+  plant.extra = care.careTips[0];
+  plant.aiCare = true;
+}
+
+function ownPlantOrError(req, res) {
+  const plant = findPlant(req.params.id);
+  if (!plant) {
+    res.status(404).json({ error: 'Растение не найдено' });
+    return null;
+  }
+  if (plant.artId !== 'other') {
+    res.status(400).json({ error: 'Заполнить уход можно только у своего растения' });
+    return null;
+  }
+  return plant;
+}
+
+app.post('/api/plants/:id/ai-care', async (req, res) => {
+  const plant = ownPlantOrError(req, res);
+  if (!plant) return;
+  if (!llmReady(userDb().settings)) {
+    return res.status(503).json({ error: 'Чат выключен: в настройках укажите ключ OpenRouter, OpenAI или Сбера.' });
+  }
+  const latin = readLatinName(req.body || {});
+  if (!latin) return res.status(400).json({ error: 'Укажите латинское название' });
+  const ai = userDb().settings.ai || {};
+  const messages = careFillMessages(latin);
+  const opts = { temperature: 0.2, maxTokens: 1600 };
+  if (ai.provider === 'openrouter') {
+    return res.json({
+      relay: 'openrouter',
+      model: ai.openrouterModel || OPENROUTER_MODELS[0].id,
+      key: ai.openrouterKey,
+      messages,
+      maxTokens: opts.maxTokens,
+      latin
+    });
+  }
+  try {
+    const reply = await completeChat(ai, messages, opts);
+    applyAiCare(plant, parseCareReply(reply), latin);
+    saveData();
+    res.json({ ok: true });
+  } catch (e) {
+    const known = e.message === 'Не удалось разобрать ответ модели';
+    res.status(502).json({ error: known ? e.message : ('Не удалось получить ответ: ' + e.message) });
+  }
+});
+
+app.post('/api/plants/:id/ai-care/apply', (req, res) => {
+  const plant = ownPlantOrError(req, res);
+  if (!plant) return;
+  const latin = readLatinName(req.body || {});
+  const reply = typeof req.body.reply === 'string' ? req.body.reply.trim().slice(0, 12000) : '';
+  if (!latin) return res.status(400).json({ error: 'Укажите латинское название' });
+  if (!reply) return res.status(400).json({ error: 'Нет сообщения или ответа' });
+  try {
+    applyAiCare(plant, parseCareReply(reply), latin);
+  } catch (e) {
+    return res.status(502).json({ error: e.message });
+  }
+  saveData();
+  res.json({ ok: true });
 });
 
 function openBrowser(url) {

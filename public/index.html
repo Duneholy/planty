@@ -74,6 +74,18 @@
 
   <footer class="footer"><span id="footerBrand">🌿 Поливайка</span> · <a href="https://github.com/Duneholy" target="_blank" rel="noopener">Yury Mikhno</a></footer>
 
+  <div class="modal-backdrop confirm-backdrop" id="aiCareBackdrop" hidden>
+    <div class="modal confirm-sheet" role="dialog" aria-modal="true" aria-labelledby="aiCareTitle">
+      <h2 id="aiCareTitle"></h2>
+      <p id="aiCareText"></p>
+      <input class="field-input" id="aiCareLatin" type="text" maxlength="120" autocomplete="off">
+      <div class="confirm-actions">
+        <button type="button" class="btn btn-ghost" id="aiCareCancel"></button>
+        <button type="button" class="btn btn-green" id="aiCareOk"></button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-backdrop confirm-backdrop" id="confirmBackdrop" hidden>
     <div class="modal confirm-sheet" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
       <h2 id="confirmTitle"></h2>
